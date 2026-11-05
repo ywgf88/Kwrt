@@ -10,6 +10,12 @@ name: Build OpenWrt
 
 on: 
   repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: '设备架构目录（devices 下的目录名）'
+        required: true
+        default: 'mediatek_filogic'
 
 env:
   REPO_TOKEN: ${{ secrets.TOKEN_KIDDIN9 }}
@@ -31,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: ["${{ github.event.client_payload.target }}"]
+        target: ["${{ github.event.client_payload.target || inputs.target || 'mediatek_filogic' }}"]
         
     steps:
     - name: Checkout
