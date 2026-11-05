@@ -55,10 +55,10 @@ while [[ "$status" == "in_progress" || "$status" == "queued" ]];do
 	status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/kiddin9/op-packages/actions/runs" | jq -r '.workflow_runs[0].status')
 done
 
-wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
-
-# 固定 golang 到 1.27：op-packages 里的 xray-core go.mod 要求 go >= 1.27
-curl -fsSL https://raw.githubusercontent.com/kenzok8/golang/1.27/golang/Makefile -o feeds/packages/lang/golang/golang/Makefile
+# immortalwrt 用 "dummy golang + golang1.X" 的结构，不要覆盖其 Makefile。
+# op-packages 的 xray-core(26.10.31) go.mod 要求 go >= 1.27，这里把默认 go 版本改为 1.27
+sed -i 's/^GO_DEFAULT_VERSION:=1\.26$/GO_DEFAULT_VERSION:=1.27/' feeds/packages/lang/golang/golang-values.mk
+grep -n "GO_DEFAULT_VERSION" feeds/packages/lang/golang/golang-values.mk | head -3
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
 
