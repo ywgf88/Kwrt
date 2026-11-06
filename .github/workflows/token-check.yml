@@ -1,0 +1,19 @@
+name: Token Check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Who is the token
+        run: |
+          echo "--- /user ---"
+          curl -s -H "Authorization: token ${{ secrets.TOKEN_KIDDIN9 }}" https://api.github.com/user | jq -r '"login=\(.login)  message=\(.message)"'
+          echo "--- repo permissions ---"
+          curl -s -H "Authorization: token ${{ secrets.TOKEN_KIDDIN9 }}" https://api.github.com/repos/ywgf88/Kwrt | jq -r '"full_name=\(.full_name)  permissions=\(.permissions)"'
+          echo "--- releases count ---"
+          curl -s -H "Authorization: token ${{ secrets.TOKEN_KIDDIN9 }}" "https://api.github.com/repos/ywgf88/Kwrt/releases?per_page=5" | jq -r '"count=\(length) tags=\([.[].tag_name])"'
+          echo "--- firmware files ---"
+          ls -lh openwrt 2>/dev/null || true
